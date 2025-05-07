@@ -17,12 +17,12 @@ df = load_data()
 
 # Intégration des données CMI VA
 cmi_raw = pd.read_excel("Saur.xlsx")
-cmi_raw["CMI VA"] = cmi_raw["CL"].str.replace("mg/L", "", regex=False)
-cmi_raw["CMI VA"] = cmi_raw["CMI VA"].str.replace("<", "").str.replace(">", "").str.strip()
-cmi_raw["CMI VA"] = pd.to_numeric(cmi_raw["CMI VA"], errors="coerce")
 
-cmi_raw["CMI VAM"] = cmi_raw["CP"].str.replace("mg/L", "", regex=False)
-cmi_raw["CMI VAM"] = cmi_raw["CMI VAM"].str.replace("<", "").str.replace(">", "").str.strip()
+# Accès par position (CL = 88e, CP = 92e colonne => index 87 et 91)
+cmi_raw["CMI VA"] = cmi_raw.iloc[:, 87].astype(str).str.replace("mg/L", "").str.replace("<", "").str.replace(">", "").str.strip()
+cmi_raw["CMI VAM"] = cmi_raw.iloc[:, 91].astype(str).str.replace("mg/L", "").str.replace("<", "").str.replace(">", "").str.strip()
+
+cmi_raw["CMI VA"] = pd.to_numeric(cmi_raw["CMI VA"], errors="coerce")
 cmi_raw["CMI VAM"] = pd.to_numeric(cmi_raw["CMI VAM"], errors="coerce")
 
 # Détection VRSA si l'un des deux CMI est >= 1
