@@ -51,6 +51,11 @@ with tab1:
             semaines_alertes = df[df[f"Alert {col}"]]["Semaine"].tolist()
         for s in semaines_alertes:
             alert_table = pd.concat([alert_table, pd.DataFrame({"Antibiotique": [col], "Semaine": [s], "% R": [df.loc[df["Semaine"] == s, col].values[0]]})])
+
+    # Corriger le format de la colonne "Semaine" pour tri
+    alert_table["Semaine"] = pd.to_datetime(alert_table["Semaine"], errors="coerce")
+    alert_table = alert_table.dropna(subset=["Semaine"])
+
     st.subheader(":rotating_light: Semaines en alerte selon Tukey ou seuil fixe (VA)")
     st.dataframe(alert_table.sort_values(by="Semaine"))
 
