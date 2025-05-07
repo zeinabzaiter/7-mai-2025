@@ -17,9 +17,13 @@ df = load_data()
 # Identifier les colonnes de %
 percent_cols = [col for col in df.columns if "%" in col]
 
-# Appliquer la règle de Tukey pour détecter les alertes
+# Appliquer la règle de Tukey pour détecter les alertes (sauf %R VA)
 alert_info = {}
 for col in percent_cols:
+    if col == "%R VA":
+        df["Alerte_VRSA"] = df[col] > 0  # Alerte si résistance VA présente, même faible
+        alert_info[col] = {"Q1": "-", "Q3": "-", "Seuil": "> 0 (fixe)"}
+        continue
     q1 = df[col].quantile(0.25)
     q3 = df[col].quantile(0.75)
     iqr = q3 - q1
@@ -41,14 +45,17 @@ tab1, tab2 = st.tabs(["Tableau d'alerte", "Seuils Tukey"])
 with tab1:
     alert_table = pd.DataFrame()
     for col in percent_cols:
-        semaines_alertes = df[df[f"Alert {col}"]]["Semaine"].tolist()
+        if col == "%R VA":
+            semaines_alertes = df[df["Alerte_VRSA"]]["Semaine"].tolist()
+        else:
+            semaines_alertes = df[df[f"Alert {col}"]]["Semaine"].tolist()
         for s in semaines_alertes:
             alert_table = pd.concat([alert_table, pd.DataFrame({"Antibiotique": [col], "Semaine": [s], "% R": [df.loc[df["Semaine"] == s, col].values[0]]})])
-    st.subheader(":rotating_light: Semaines en alerte selon la règle de Tukey")
+    st.subheader(":rotating_light: Semaines en alerte selon Tukey ou seuil fixe (VA)")
     st.dataframe(alert_table.sort_values(by="Semaine"))
 
 with tab2:
-    st.subheader("Seuils d'alerte calculés (Tukey)")
+    st.subheader("Seuils d'alerte calculés (Tukey ou fixe)")
     seuils_df = pd.DataFrame(alert_info).T
     st.dataframe(seuils_df)
 
