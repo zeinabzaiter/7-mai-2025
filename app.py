@@ -53,6 +53,7 @@ with tab1:
             alert_table = pd.concat([alert_table, pd.DataFrame({"Antibiotique": [col], "Semaine": [s], "% R": [df.loc[df["Semaine"] == s, col].values[0]]})])
 
     # Nettoyer et forcer le format des semaines
+    alert_table["Semaine"] = pd.to_numeric(alert_table["Semaine"], errors="coerce")
     alert_table = alert_table.dropna(subset=["Semaine"])
     alert_table["Semaine"] = alert_table["Semaine"].astype(int)
 
