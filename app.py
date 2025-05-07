@@ -29,6 +29,7 @@ weekly_cmi = cmi_raw.groupby("Semaine").agg(
     N_tests_CMI_fusion=("VRSA_CMI_fusion", "count"),
     N_VRSA_CMI_fusion=("VRSA_CMI_fusion", "sum")
 ).reset_index()
+).reset_index()
 weekly_cmi["% VRSA (CMI fusion ≥ 1)"] = round((weekly_cmi["N_VRSA_CMI_fusion"] / weekly_cmi["N_tests_CMI_fusion"]) * 100, 2)
 ).reset_index()
 weekly_cmi["% VRSA (CMI fusion ≥ 1)"] = round((weekly_cmi["N_VRSA_CMI"] / weekly_cmi["N_tests_CMI_VA"]) * 100, 2)
