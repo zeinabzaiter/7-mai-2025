@@ -15,21 +15,23 @@ def load_data():
 
 df = load_data()
 
-# Intégration des données CMI VA
-import pandas as pd
+# Intégration des données CMI VA + VAM (fusion)
 cmi_raw = pd.read_excel("Saur.xlsx")
-cmi_raw["CMI VA"] = cmi_raw["Valeur.37"].str.replace("mg/L", "", regex=False)
-cmi_raw["CMI VA"] = cmi_raw["CMI VA"].str.replace(">", "", regex=False).str.strip()
+cmi_raw["CMI VA"] = cmi_raw["Valeur.37"].astype(str).str.replace("mg/L", "", regex=False).str.replace(">", "", regex=False).str.replace("≤", "", regex=False).str.strip()
+cmi_raw["CMI VAM"] = cmi_raw["Valeur.39"].astype(str).str.replace("mg/L", "", regex=False).str.replace(">", "", regex=False).str.replace("≤", "", regex=False).str.strip()
 cmi_raw["CMI VA"] = pd.to_numeric(cmi_raw["CMI VA"], errors="coerce")
-cmi_raw["VRSA_CMI"] = cmi_raw["CMI VA"] >= 1
+cmi_raw["CMI VAM"] = pd.to_numeric(cmi_raw["CMI VAM"], errors="coerce")
+cmi_raw["VRSA_CMI_fusion"] = (cmi_raw["CMI VA"] >= 1) | (cmi_raw["CMI VAM"] >= 1)
 cmi_raw["Semaine"] = pd.to_datetime(cmi_raw["Date de prél."], errors="coerce").dt.isocalendar().week
 
 # Regrouper les données CMI par semaine
 weekly_cmi = cmi_raw.groupby("Semaine").agg(
-    N_tests_CMI_VA=("CMI VA", "count"),
-    N_VRSA_CMI=("VRSA_CMI", "sum")
+    N_tests_CMI_fusion=("VRSA_CMI_fusion", "count"),
+    N_VRSA_CMI_fusion=("VRSA_CMI_fusion", "sum")
 ).reset_index()
-weekly_cmi["% VRSA (CMI VA ≥ 1)"] = round((weekly_cmi["N_VRSA_CMI"] / weekly_cmi["N_tests_CMI_VA"]) * 100, 2)
+weekly_cmi["% VRSA (CMI fusion ≥ 1)"] = round((weekly_cmi["N_VRSA_CMI_fusion"] / weekly_cmi["N_tests_CMI_fusion"]) * 100, 2)
+).reset_index()
+weekly_cmi["% VRSA (CMI fusion ≥ 1)"] = round((weekly_cmi["N_VRSA_CMI"] / weekly_cmi["N_tests_CMI_VA"]) * 100, 2)
 
 # Fusionner avec le df principal si Semaine est commun
 df = df.merge(weekly_cmi, on="Semaine", how="left")
