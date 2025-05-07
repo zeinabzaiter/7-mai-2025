@@ -17,11 +17,11 @@ df = load_data()
 
 # Intégration des données CMI VA
 cmi_raw = pd.read_excel("Saur.xlsx")
-cmi_raw["CMI VA"] = cmi_raw["Valeur.37"].str.replace("mg/L", "", regex=False)
+cmi_raw["CMI VA"] = cmi_raw["CL"].str.replace("mg/L", "", regex=False)
 cmi_raw["CMI VA"] = cmi_raw["CMI VA"].str.replace("<", "").str.replace(">", "").str.strip()
 cmi_raw["CMI VA"] = pd.to_numeric(cmi_raw["CMI VA"], errors="coerce")
 
-cmi_raw["CMI VAM"] = cmi_raw["Valeur.41"].str.replace("mg/L", "", regex=False)
+cmi_raw["CMI VAM"] = cmi_raw["CP"].str.replace("mg/L", "", regex=False)
 cmi_raw["CMI VAM"] = cmi_raw["CMI VAM"].str.replace("<", "").str.replace(">", "").str.strip()
 cmi_raw["CMI VAM"] = pd.to_numeric(cmi_raw["CMI VAM"], errors="coerce")
 
