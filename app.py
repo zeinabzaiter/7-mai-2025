@@ -82,8 +82,7 @@ filtered_df = df[(df["Semaine"] >= semaine_min) & (df["Semaine"] <= semaine_max)
 if "% VRSA (CMI VA ≥ 1)" not in percent_cols:
     percent_cols.append("% VRSA (CMI VA ≥ 1)")
 fig = px.line(filtered_df, x="Semaine", y=to_plot, markers=True)
-fig.update_layout(title="Evolution Hebdomadaire du % de Résistance
-(CMI ≥ 1 mg/L = VRSA, Tukey pour les autres)")"))
+fig.update_layout(title="Evolution Hebdomadaire du % de Résistance (CMI ≥ 1 mg/L = VRSA, Tukey pour les autres)")")"))
 st.plotly_chart(fig, use_container_width=True)
 
 # Affichage des alertes
