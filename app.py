@@ -14,6 +14,11 @@ def load_data():
 
 df = load_data()
 
+# Nettoyage de la colonne Semaine pour éviter erreurs de type
+df["Semaine"] = pd.to_numeric(df["Semaine"], errors="coerce")
+df = df.dropna(subset=["Semaine"])
+df["Semaine"] = df["Semaine"].astype(int)
+
 # Identifier les colonnes de %
 percent_cols = [col for col in df.columns if "%" in col]
 
