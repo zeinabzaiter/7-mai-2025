@@ -3,7 +3,7 @@ import pandas as pd
 import plotly.express as px
 
 st.set_page_config(page_title="Dashboard Résistance Antibiotiques 2024", layout="wide")
-st.title("📈 % de Résistance aux Antibiotiques - Semaine par Semaine (2024)")
+st.title("\ud83d\udcc8 % de Résistance aux Antibiotiques - Semaine par Semaine (2024)")
 
 # Chargement des données
 @st.cache_data
@@ -21,8 +21,8 @@ percent_cols = [col for col in df.columns if "%" in col]
 alert_info = {}
 for col in percent_cols:
     if col == "%R VA":
-        df["Alerte_VRSA"] = df[col] > 0  # Alerte si résistance VA présente, même faible
-        alert_info[col] = {"Q1": "-", "Q3": "-", "Seuil": "> 0 (fixe)"}
+        df["Alerte_VRSA"] = df["R VA"] >= 1  # Alerte si ≥1 cas VRSA
+        alert_info[col] = {"Q1": "-", "Q3": "-", "Seuil": "≥ 1 cas (fixe)"}
         continue
     q1 = df[col].quantile(0.25)
     q3 = df[col].quantile(0.75)
@@ -52,11 +52,11 @@ with tab1:
         for s in semaines_alertes:
             alert_table = pd.concat([alert_table, pd.DataFrame({"Antibiotique": [col], "Semaine": [s], "% R": [df.loc[df["Semaine"] == s, col].values[0]]})])
 
-    # Corriger le format de la colonne "Semaine" pour tri
-    alert_table["Semaine"] = pd.to_datetime(alert_table["Semaine"], errors="coerce")
+    # Nettoyer et forcer le format des semaines
     alert_table = alert_table.dropna(subset=["Semaine"])
+    alert_table["Semaine"] = alert_table["Semaine"].astype(int)
 
-    st.subheader(":rotating_light: Semaines en alerte selon Tukey ou seuil fixe (VA)")
+    st.subheader(":rotating_light: Semaines en alerte selon Tukey ou seuil fixe (VRSA)")
     st.dataframe(alert_table.sort_values(by="Semaine"))
 
 with tab2:
