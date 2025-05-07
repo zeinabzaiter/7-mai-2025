@@ -4,8 +4,7 @@ import plotly.express as px
 
 st.set_page_config(page_title="Dashboard Résistance Antibiotiques 2024", layout="wide")
 st.title("% de Résistance aux Antibiotiques - Semaine par Semaine (2024)")
-st.caption("
-ℹ️ Une souche est considérée VRSA si CMI VA ≥ 1 mg/L. Les alertes sont basées sur cette définition clinique ainsi que sur la règle de Tukey pour les autres antibiotiques.")
+st.caption("ℹ️ Une souche est considérée VRSA si CMI VA ≥ 1 mg/L. Les alertes sont basées sur cette définition clinique ainsi que sur la règle de Tukey pour les autres antibiotiques.")
 
 # Chargement des données
 @st.cache_data
