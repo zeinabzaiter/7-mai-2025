@@ -25,10 +25,11 @@ cmi_raw["VRSA_CMI_fusion"] = (cmi_raw["CMI VA"] >= 1) | (cmi_raw["CMI VAM"] >= 1
 cmi_raw["Semaine"] = pd.to_datetime(cmi_raw["Date de prél."], errors="coerce").dt.isocalendar().week
 
 # Regrouper les données CMI par semaine
-weekly_cmi = cmi_raw.groupby("Semaine").agg(
-    N_tests_CMI_fusion=("VRSA_CMI_fusion", "count"),
-    N_VRSA_CMI_fusion=("VRSA_CMI_fusion", "sum")
-).reset_index()
+weekly_cmi = cmi_raw.groupby("Semaine").agg({
+    "VRSA_CMI_fusion": ["count", "sum"]
+}).reset_index()
+weekly_cmi.columns = ["Semaine", "N_tests_CMI_fusion", "N_VRSA_CMI_fusion"]
+weekly_cmi["% VRSA (CMI fusion ≥ 1)"] = round((weekly_cmi["N_VRSA_CMI_fusion"] / weekly_cmi["N_tests_CMI_fusion"]) * 100, 2)
 ).reset_index()
 weekly_cmi["% VRSA (CMI fusion ≥ 1)"] = round((weekly_cmi["N_VRSA_CMI_fusion"] / weekly_cmi["N_tests_CMI_fusion"]) * 100, 2)
 ).reset_index()
