@@ -3,7 +3,7 @@ import pandas as pd
 import plotly.express as px
 
 st.set_page_config(page_title="Dashboard Résistance Antibiotiques 2024", layout="wide")
-st.title("\ud83d\udcc8 % de Résistance aux Antibiotiques - Semaine par Semaine (2024)")
+st.title("% de Résistance aux Antibiotiques - Semaine par Semaine (2024)")
 
 # Chargement des données
 @st.cache_data
