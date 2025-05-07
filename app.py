@@ -82,42 +82,4 @@ filtered_df = df[(df["Semaine"] >= semaine_min) & (df["Semaine"] <= semaine_max)
 if "% VRSA (CMI VA ≥ 1)" not in percent_cols:
     percent_cols.append("% VRSA (CMI VA ≥ 1)")
 fig = px.line(filtered_df, x="Semaine", y=to_plot, markers=True)
-fig.update_layout(title="Evolution Hebdomadaire du % de Résistance (CMI ≥ 1 mg/L = VRSA, Tukey pour les autres)")")")"))
-st.plotly_chart(fig, use_container_width=True)
-
-# Affichage des alertes
-tab1, tab2 = st.tabs(["Tableau d'alerte", "Seuils Tukey"])
-
-with tab1:
-    alert_table = pd.DataFrame()
-    for col in percent_cols:
-        if col == "%R VA":
-            semaines_alertes = df[df["Alerte_VRSA"]]["Semaine"].tolist()
-        elif col == "% VRSA (CMI VA ≥ 1)":
-            semaines_alertes = df[df["Alerte_CMI"]]["Semaine"].tolist()
-        else:
-            semaines_alertes = df[df[f"Alert {col}"]]["Semaine"].tolist()
-        for s in semaines_alertes:
-            alert_table = pd.concat([alert_table, pd.DataFrame({"Antibiotique": [col], "Semaine": [s], "% R": [df.loc[df["Semaine"] == s, col].values[0]]})])
-
-    # Nettoyer et forcer le format des semaines
-    alert_table["Semaine"] = pd.to_numeric(alert_table["Semaine"], errors="coerce")
-    alert_table = alert_table.dropna(subset=["Semaine"])
-    alert_table["Semaine"] = alert_table["Semaine"].astype(int)
-
-    st.subheader(":rotating_light: Semaines en alerte selon Tukey ou seuil fixe (VRSA)")
-    def highlight_vrsa(row):
-        if row['Antibiotique'] == "% VRSA (CMI VA ≥ 1)":
-            return ['background-color: #ffcccc']*len(row)
-        return ['']*len(row)
-
-    st.dataframe(alert_table.sort_values(by="Semaine").style.apply(highlight_vrsa, axis=1))
-
-with tab2:
-    st.subheader("Seuils d'alerte calculés (Tukey ou fixe)")
-    seuils_df = pd.DataFrame(alert_info).T
-    st.dataframe(seuils_df)
-
-# Option d'affichage des données brutes
-with st.expander("Afficher les données complètes"):
-    st.dataframe(df)
+fig.update_layout(title="Evolution Hebdomadaire du % de Résistance (CMI ≥ 1 mg/L = VRSA, Tukey pour les autres)")
