@@ -34,8 +34,19 @@ for col in percent_cols:
 # Sélection d'antibiotiques à afficher
 to_plot = st.multiselect("Choisissez les antibiotiques à afficher (colonnes %)", percent_cols, default=percent_cols)
 
+# Filtrage par plage de semaines
+semaine_min, semaine_max = st.slider(
+    "Filtrer par plage de semaines",
+    min_value=int(df["Semaine"].min()),
+    max_value=int(df["Semaine"].max()),
+    value=(int(df["Semaine"].min()), int(df["Semaine"].max()))
+)
+
+# Filtrage du dataframe
+filtered_df = df[(df["Semaine"] >= semaine_min) & (df["Semaine"] <= semaine_max)]
+
 # Affichage du graphe
-fig = px.line(df, x="Semaine", y=to_plot, markers=True)
+fig = px.line(filtered_df, x="Semaine", y=to_plot, markers=True)
 fig.update_layout(title="Evolution Hebdomadaire du % de Résistance", yaxis=dict(range=[0, 100]))
 st.plotly_chart(fig, use_container_width=True)
 
